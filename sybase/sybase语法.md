@@ -68,3 +68,84 @@ end
 >sp_help test
 >go
 ```
+### -查看client，server编码格式 
+```
+　　查看服务器端字符集： 
+　　在isql环境中执行： 
+　　1>; sp_helpsort 
+　　2>; go 
+　　查看客户端字符集： 
+　　在isql环境中执行： 
+　　1>; select @@client_csname 
+　　2>; go 
+```
+
+### -为sybase安装新的编码格式  
+```
+cd /opt/sybase  #sybase安装目录，需切换导自己的目录
+source SYBASE.sh #若不执行此命令，则charset命令找不到
+#假设要安装utf8编码格式
+cd /opt/sybase/charsets/utf8
+执行命令：charset -U用户名 -P密码 -S服务名 binary.src 要安装字符集名
+比如：charset -Usa -P  -Szxck binary.srt utf8
+```
+
+### -更改服务端编码格式
+```
+找到你要更改的编码格式名称对应的id，用下面语句查询：
+>select name,id from master..syscharsets
+
+比如修改为cp936，id为171
+
+>sp_configure "default character set id",171
+>go
+
+重启server两次即可。
+（注:第一次启动后，server会自动宕掉，需要第二次重启后才能使用
+```
+
+### -停止sybase服务 
+```bash
+cd /opt/sybase/ASE-15_0/install
+./showserver
+kill -9 pid
+```
+
+### -启动sybase 
+```bash
+cd /opt/sybase
+source SYBASE.sh
+cd /opt/sybase/ASE-15_0/install
+./startserver -f RUN_ASE --f RUN_ASW_BS
+```
+### -更改client的默认编码格式
+```
+vim /opt/sybase/locales/locales.dat  #其中配置了各种系统的字符集，windows 为[NT],linux 为[linux]
+修改带 default字样的行，比如
+locale = default, us_english, cp936
+
+经在linux下测试，如果linux系统设置的字符集LANG=utf8 ，则sybase客户端的编码格式也是utf8，如果
+unset LANG，则client的编码格式会使用cp936
+```
+
+### -The transaction log in database xxx is almost full
+日志写满了所导致的，解决方案有两种，
+```
+1.清楚日志
+>DUMP TRANSACTION 你的数据库 WITH NO_LOG
+>go
+2.调大日志的容量，在建库时就分配较多日志容量
+>disk init
+name="log_device",
+physname="/opt/sybase/tranlog/log.dat",
+size = 512000
+>go
+
+>create database dbo
+     on default=100
+     log on log_device=50
+>go
+其中log_device=50中的50是百分比
+```
+
+
