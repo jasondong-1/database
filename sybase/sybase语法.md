@@ -148,4 +148,13 @@ size = 512000
 其中log_device=50中的50是百分比
 ```
 
+### 创建带主键自增的表
+```
+CREATE TABLE dbo.old_new_bas_admin_district(
+	id    bigint  identity,
+	old_admin_district_id    numeric(15,0),
+	new_admin_district_id    numeric(15,0)
+)with identity_gap=1
 
+with identity_gap=1 设置跳跃值为1
+```
