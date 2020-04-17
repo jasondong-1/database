@@ -158,3 +158,13 @@ CREATE TABLE dbo.old_new_bas_admin_district(
 
 with identity_gap=1 设置跳跃值为1
 ```
+
+
+### sybase The 'select into' database option is not enabled for database 'your dbname'
+修改表中字段长度时遇到上面错误，解决方法如下
+```
+use   master
+go
+sp_dboption 'your dbname','select into/bulkcopy/pllsort',true
+go
+```
