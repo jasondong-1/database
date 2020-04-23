@@ -168,3 +168,51 @@ go
 sp_dboption 'your dbname','select into/bulkcopy/pllsort',true
 go
 ```
+
+### 查看数据库信息  
+```
+sp_helpdb
+GO
+```
+
+### 查看设备信息  
+```
+sp_helpdevice
+go
+```
+
+### 在磁盘上为sybase创建空间,可以分配给数据库活log  
+```
+disk init  name  = 'name',
+physname  = '/data1/sybase_data/nt4_data_02.dat',
+
+size  = '10000M', dsync = false, skip_alloc = true
+go
+```
+
+### 给数据库分配空间  
+```
+ALTER DATABASE dbname
+ON name = '10000M'
+go
+name 是上一条笔记中创建的name
+```
+
+### 为日志分配空间  
+```
+ALTER DATABASE database
+LOG ON nt4_data_03 = '300M' -- 38400 pages
+go
+```
+###  sybase的配置   
+配置暂时不明白什么意思  
+```
+exec master.dbo.sp_dboption dbo, 'select into/NOlkcopy', true
+go
+
+exec master.dbo.sp_dboption dbo, 'trunc log on chkpt', true
+go
+
+exec master.dbo.sp_dboption dbo, 'abort tran on log full', true
+go
+````
